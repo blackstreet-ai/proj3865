@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  subscription  Subscription?
+  images        Image[]
+}
+
+model Subscription {
+  id                String    @id @default(cuid())
+  userId           String    @unique
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan             String    // 'free', 'basic', 'premium', 'pro'
+  creditsPerMonth  Int       // 100, 300, 500, 1000
+  creditsRemaining Int
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  renewalDate     DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Image {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt      String
+  negativePrompt String?
+  model       String    // 'rundiffusion-fal/rundiffusion-photo-flux', etc.
+  resolution  String?   // e.g., '512x512', '1024x1024'
+  storageUrl  String    // S3 or other storage URL
+  shareUrl    String?   // Optional public sharing URL
+  createdAt   DateTime  @default(now())
+  metadata    Json?     // Additional parameters used for generation
+}
