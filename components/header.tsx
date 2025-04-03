@@ -11,8 +11,8 @@ export function Header() {
   const isAuthenticated = status === "authenticated";
 
   return (
-    <header className="border-b">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="border-b w-full">
+      <div className="container flex h-16 items-center justify-between mx-auto">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-bold text-xl">
             AI Image Generator
